@@ -1,0 +1,102 @@
+# Epics and Stories - TODO App Upgrade
+
+## MVP
+
+- Epic: Task Data Model Enhancements
+  - Story: Add due date field to tasks
+    - Acceptance Criteria: Tasks support an optional `dueDate` value.
+    - Acceptance Criteria: When present, `dueDate` uses ISO `YYYY-MM-DD` format.
+    - Technical Requirements: Extend the task schema and persistence model to include an optional string `dueDate` field stored in ISO `YYYY-MM-DD` format.
+  - Story: Add priority field to tasks
+    - Acceptance Criteria: Tasks support a `priority` value.
+    - Acceptance Criteria: Allowed priority values are `P1`, `P2`, and `P3`.
+    - Technical Requirements: Extend the task schema and persistence model to include a `priority` field constrained to `P1`, `P2`, or `P3`.
+  - Story: Default priority to P3
+    - Acceptance Criteria: New tasks without a selected priority are assigned `P3`.
+    - Technical Requirements: Task creation logic must assign `P3` when no priority value is provided.
+  - Story: Ignore invalid due date values
+    - Acceptance Criteria: Invalid `dueDate` values are treated as absent.
+    - Technical Requirements: Validation logic must reject non-ISO or invalid date values and omit them from the saved task state.
+  - Story: Require task title on creation
+    - Acceptance Criteria: A task cannot be created without a title.
+    - Technical Requirements: Task creation must validate that `title` is present before saving a new task.
+- Epic: Task Creation and Display Updates
+  - Story: Add due date input to task form
+    - Acceptance Criteria: The task form includes an optional due date input.
+    - Technical Requirements: Update the task form UI to include a date input bound to the task `dueDate` field.
+  - Story: Add priority selector to task form
+    - Acceptance Criteria: The task form includes a priority selector.
+    - Acceptance Criteria: The selector offers `P1`, `P2`, and `P3` options.
+    - Technical Requirements: Update the task form UI to include a priority control limited to the `P1`, `P2`, and `P3` options.
+  - Story: Show due date on task items
+    - Acceptance Criteria: Tasks with a due date display that due date in the task item.
+    - Acceptance Criteria: Tasks without a due date do not show a due date value.
+    - Technical Requirements: Task item rendering must conditionally display the due date only when a valid `dueDate` value exists.
+  - Story: Show priority badge on task items
+    - Acceptance Criteria: Every task item displays a priority badge.
+    - Acceptance Criteria: The badge reflects the task's current priority value.
+    - Technical Requirements: Task item rendering must include a priority badge whose label is derived from the task `priority` value.
+  - Story: Apply P1 badge color
+    - Acceptance Criteria: Tasks with priority `P1` display a red badge.
+    - Technical Requirements: Define badge styling rules that map `P1` to the red visual treatment.
+  - Story: Apply P2 badge color
+    - Acceptance Criteria: Tasks with priority `P2` display an orange badge.
+    - Technical Requirements: Define badge styling rules that map `P2` to the orange visual treatment.
+  - Story: Apply P3 badge color
+    - Acceptance Criteria: Tasks with priority `P3` display a gray badge.
+    - Technical Requirements: Define badge styling rules that map `P3` to the gray visual treatment.
+- Epic: Task Filtering
+  - Story: Add All tasks tab
+    - Acceptance Criteria: The interface includes an `All` filter tab.
+    - Technical Requirements: Add an `All` filter control to the task list UI and wire it to the active filter state.
+  - Story: Add Today tasks tab
+    - Acceptance Criteria: The interface includes a `Today` filter tab.
+    - Technical Requirements: Add a `Today` filter control to the task list UI and wire it to date-based filtering logic.
+  - Story: Add Overdue tasks tab
+    - Acceptance Criteria: The interface includes an `Overdue` filter tab.
+    - Technical Requirements: Add an `Overdue` filter control to the task list UI and wire it to overdue filtering logic.
+  - Story: Show completed tasks in All view
+    - Acceptance Criteria: The `All` view displays completed tasks.
+    - Acceptance Criteria: The `All` view also displays incomplete tasks.
+    - Technical Requirements: The `All` filter must return the full task collection without excluding completed items.
+  - Story: Hide completed tasks in Today view
+    - Acceptance Criteria: The `Today` view excludes completed tasks.
+    - Technical Requirements: The `Today` filter logic must exclude tasks marked as completed.
+  - Story: Hide completed tasks in Overdue view
+    - Acceptance Criteria: The `Overdue` view excludes completed tasks.
+    - Technical Requirements: The `Overdue` filter logic must exclude tasks marked as completed.
+  - Story: Filter tasks due today
+    - Acceptance Criteria: The `Today` view shows only incomplete tasks whose due date is today.
+    - Technical Requirements: Implement date comparison logic that matches incomplete tasks with `dueDate` equal to the current local date.
+  - Story: Filter overdue tasks
+    - Acceptance Criteria: The `Overdue` view shows only incomplete tasks with a past due date.
+    - Technical Requirements: Implement date comparison logic that matches incomplete tasks with `dueDate` earlier than the current local date.
+- Epic: Local Storage Support
+  - Story: Persist due date in local storage
+    - Acceptance Criteria: A task's due date is retained in local storage.
+    - Acceptance Criteria: Reloading the app preserves stored due dates.
+    - Technical Requirements: Update local storage serialization and hydration to save and restore the `dueDate` field for each task.
+  - Story: Persist priority in local storage
+    - Acceptance Criteria: A task's priority is retained in local storage.
+    - Acceptance Criteria: Reloading the app preserves stored priorities.
+    - Technical Requirements: Update local storage serialization and hydration to save and restore the `priority` field for each task.
+
+## Post-MVP
+
+- Epic: Overdue Task Visibility
+  - Story: Highlight overdue tasks in red
+    - Acceptance Criteria: Incomplete overdue tasks are visually highlighted in red.
+    - Technical Requirements: Add conditional styling that applies the overdue visual treatment only to incomplete tasks with past due dates.
+- Epic: Task Sorting
+  - Story: Sort overdue tasks first
+    - Acceptance Criteria: Overdue tasks appear before non-overdue tasks.
+    - Technical Requirements: Implement sorting logic that prioritizes overdue status before other sort keys.
+  - Story: Sort tasks by priority
+    - Acceptance Criteria: Within the same overdue status, tasks are ordered by priority from `P1` to `P3`.
+    - Technical Requirements: Implement priority ranking logic that orders `P1` before `P2` before `P3`.
+  - Story: Sort tasks by due date ascending
+    - Acceptance Criteria: Within the same overdue status and priority, tasks with due dates are ordered from earliest to latest.
+    - Technical Requirements: Implement ascending date sorting for tasks that share the same overdue status and priority.
+  - Story: Place undated tasks last
+    - Acceptance Criteria: Tasks without a due date appear after tasks with due dates.
+    - Technical Requirements: Sorting logic must place tasks with no `dueDate` after dated tasks when other higher-priority sort keys are equal.
