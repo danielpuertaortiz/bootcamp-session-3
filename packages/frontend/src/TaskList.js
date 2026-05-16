@@ -6,6 +6,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import EventIcon from '@mui/icons-material/Event';
 
+const PRIORITY_BADGE = {
+  P1: { label: 'P1', background: 'linear-gradient(135deg, #f44336 0%, #c62828 100%)' },
+  P2: { label: 'P2', background: 'linear-gradient(135deg, #ff9800 0%, #e65100 100%)' },
+  P3: { label: 'P3', background: 'linear-gradient(135deg, #9e9e9e 0%, #616161 100%)' },
+};
+
 function TaskList({ onEdit }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +39,7 @@ function TaskList({ onEdit }) {
       const response = await fetch('/api/tasks');
       if (!response.ok) throw new Error('Failed to fetch tasks');
       const data = await response.json();
-      setTasks(data);
+      setTasks(data.map(task => ({ ...task, priority: task.priority || 'P3' })));
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -203,6 +209,18 @@ function TaskList({ onEdit }) {
                 gap: 1
               }}
             >
+              <Chip
+                label={(PRIORITY_BADGE[task.priority] || PRIORITY_BADGE.P3).label}
+                size="small"
+                sx={{
+                  height: 20,
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  minWidth: 28,
+                  background: (PRIORITY_BADGE[task.priority] || PRIORITY_BADGE.P3).background,
+                  color: 'white',
+                }}
+              />
               {task.due_date && (
                 <Chip
                   icon={<EventIcon sx={{ fontSize: 14 }} />}
