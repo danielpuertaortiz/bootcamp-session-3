@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Paper, Typography, Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { TextField, Button, Paper, Typography, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
+import './App.css';
 
 function TaskForm({ onSave, initialTask }) {
   const [title, setTitle] = useState(initialTask?.title || '');
@@ -147,30 +148,22 @@ function TaskForm({ onSave, initialTask }) {
             }
           }}
         />
-        <FormControl fullWidth size="small">
-          <InputLabel id="priority-label">Priority</InputLabel>
-          <Select
-            labelId="priority-label"
-            id="task-priority"
-            value={priority}
-            label="Priority"
-            onChange={e => setPriority(e.target.value)}
-            inputProps={{ 'data-testid': 'priority-select' }}
-            sx={{
-              borderRadius: 2,
-              '&:hover .MuiOutlinedInput-notchedOutline': {
-                borderColor: '#1976d2',
-              },
-              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                borderColor: '#1976d2',
-              }
-            }}
-          >
-            <MenuItem value="P1">P1 — High</MenuItem>
-            <MenuItem value="P2">P2 — Medium</MenuItem>
-            <MenuItem value="P3">P3 — Low</MenuItem>
-          </Select>
-        </FormControl>
+        <Box>
+          <Typography variant="caption" sx={{ color: '#555', fontWeight: 500, mb: 0.5, display: 'block' }}>Priority</Typography>
+          <div className="priority-selector" data-testid="priority-select">
+            {['P1', 'P2', 'P3'].map(p => (
+              <button
+                key={p}
+                type="button"
+                className={`priority-btn${priority === p ? ' selected' : ''}`}
+                onClick={() => setPriority(p)}
+                data-testid={`priority-btn-${p.toLowerCase()}`}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+        </Box>
         {error && <Typography color="error" sx={{ fontWeight: 500, fontSize: '0.875rem' }}>{error}</Typography>}
         <Box display="flex" gap={2}>
           <Button 
